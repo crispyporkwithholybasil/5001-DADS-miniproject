@@ -267,7 +267,7 @@ ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=3)
 ax.set_xlabel('Year')
 ax.set_title('Total Non-commercial car production history past 10 Years by Region')
 ```
-![image](https://user-images.githubusercontent.com/114766023/226210595-15079ccd-2325-4c31-b31a-ef57f9b1be1d.png)
+![image](https://user-images.githubusercontent.com/114766023/226348572-163556d8-623e-4b87-84c5-5d27e66a8218.png)
 
 เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
 
