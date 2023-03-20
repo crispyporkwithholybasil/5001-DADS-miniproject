@@ -274,6 +274,33 @@ ax.set_title('Total Non-commercial car production history past 10 Years by Regio
 ![image](https://user-images.githubusercontent.com/114766023/226210568-c4db94dc-d0f5-4178-857b-72a77bdc1f42.png)
 
 
+3.3) ปริมาณรถยนต์จดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
+ดูแนวโน้มของรถยนต์จดทะเบียนใหม่ย้อนหลัง 5 ปี และดูสัดส่วนของรถยนต์แต่ละประเภทเชื้อเพลิงในแต่บะปีด้วย Stack bar chart
+(ICE =  internal combustion engine, PHEV = Plug-in Hybrid Electic vehicle, HERV = Hybrid Electric Vehicle, BEV = Baterry Electric Vehicle)
+ซึ่งพบว่ากราฟปี 2565 มีปริมาณเพิ่มขึ้นจากปี 2564 ซึ่งพ้นจากภาวะการระบาดของโควิด-19
+
+เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป้นเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
+![image](https://user-images.githubusercontent.com/114766023/226322871-4f7b4486-0347-4ec5-b027-860fbb6a32d0.png)
+
+https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png
+
+
+```
+new_register_df10 = new_register_df9.iloc[:3]
+new_register_df11 =new_register_df10.loc[:, ['HEV', 'PHEV','BEV']]
+new_register_df11
+
+plt.figure(figsize=(15,5),dpi=150)
+ax = plt.gca()
+new_register_df11.plot( kind='barh', ax=ax,stacked=True,
+         title='Number of xEV rigistry car', ylabel='The number of xEV rigistry car' )
+
+
+left, right = ax.get_xlim()    
+ax.set_xlim(left, right+0.7) 
+```
+![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
+
 ## 4 : Question and Answer
 ในการศึกษาครั้งนี้จะสนใจเฉพาะรถยนต์ที่ไม่ใช่เพื่อการพานิชย์ซึ่งก็คือรถยนต์นั่งส่วนบุคคล (Passenger car) รถกระบะขนาดด 1 ตัน (Pickup 1 ton truck) และรถกลุ่ม PPV เท่านั้น
 
@@ -380,11 +407,6 @@ ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
 
 
 
-      
-   ![image](https://user-images.githubusercontent.com/114766023/226211004-6574fe8e-26cf-4e76-b9fb-4d4b5f302e9a.png)
-   ![image](https://user-images.githubusercontent.com/83213407/226184043-4bdaade1-91af-4633-9d35-932ee2f0f0d3.png)
-   
-   ![image](https://user-images.githubusercontent.com/114766023/226211647-6f14dae4-9a84-4541-9338-bcb3e68b5b38.png)
 
    ![image](https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png)
 
