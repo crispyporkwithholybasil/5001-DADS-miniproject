@@ -45,7 +45,7 @@ plt.style.use('seaborn')
 ```
 2.2) Data Ceansing and Transform process
 
-2.2.1) ข้อมูลการผลิตรถยนต์ภายในประเทศไทยและข้อมูลผลิตรถนยนต์เพื่อการส่งออกรถยนต์ต่างประเทศ
+2.2.1) ข้อมูลการผลิตรถยนต์ภายในประเทศไทยและข้อมูลผลิตรถยนต์เพื่อการส่งออกรถยนต์ต่างประเทศ
 ```
 df_prod_dom = pd.read_excel("https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/stat-auto-production-thai.xlsx?raw=true",header=[0,1]) 
 RangeIndex: 133 entries, 0 to 132
