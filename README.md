@@ -279,12 +279,6 @@ ax.set_title('Total Non-commercial car production history past 10 Years by Regio
 (ICE =  internal combustion engine, PHEV = Plug-in Hybrid Electic vehicle, HERV = Hybrid Electric Vehicle, BEV = Baterry Electric Vehicle)
 ซึ่งพบว่ากราฟปี 2565 มีปริมาณเพิ่มขึ้นจากปี 2564 ซึ่งพ้นจากภาวะการระบาดของโควิด-19
 
-เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป้นเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
-![image](https://user-images.githubusercontent.com/114766023/226322871-4f7b4486-0347-4ec5-b027-860fbb6a32d0.png)
-
-https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png
-
-
 ```
 new_register_df10 = new_register_df9.iloc[:3]
 new_register_df11 =new_register_df10.loc[:, ['HEV', 'PHEV','BEV']]
@@ -300,6 +294,48 @@ left, right = ax.get_xlim()
 ax.set_xlim(left, right+0.7) 
 ```
 ![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
+
+
+![image](https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png)
+
+เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป้นเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
+
+![image](https://user-images.githubusercontent.com/114766023/226322871-4f7b4486-0347-4ec5-b027-860fbb6a32d0.png)
+
+เทียบสัดส่วน 2564-2565 YoY
+![image](https://user-images.githubusercontent.com/114766023/226323639-6300e468-d4e2-4597-89a1-f5ba846f2851.png)
+
+
+เปรียบเทียบปริมาณรถ EV ที่จดทะเลียนใหม่แต่ละประเภท และดูอัตราการเติบโตเทียบกับปีก่อนหน้า (%YOY Growth rate)
+![image](https://user-images.githubusercontent.com/114766023/226210815-94db3279-77a3-4fe5-855e-0e62673ff223.png)
+![image](https://user-images.githubusercontent.com/114766023/226324759-7059ddf1-e77b-4af6-b5a1-8e02a6e9522d.png)
+
+
+3.4) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธค 2565 การไฟฟ้านครหลวง ใช้ในการหาจำนวสนสถานีอัดประจุในพื้นที่ กทม.
+
+คำนวนหาอัตราการเพิ่มขึ้นของสถานีอัดประจุจากปีก่อนหน้า (%YOY Growth rate)
+```
+diff = (charger_df4['สถานีอัดประจุไฟฟ้า'] - charger_df4['สถานีอัดประจุไฟฟ้า'].shift(1))/charger_df4['สถานีอัดประจุไฟฟ้า']
+
+charger_df4['percent_growth'] = diff*100
+charger_df4
+```
+![image](https://user-images.githubusercontent.com/114766023/226256039-244994bf-ddc7-49a8-bc2c-8334bb2f4962.png)
+
+```
+#Plot line chart to see the trend
+plt.figure(figsize=(15,5), dpi=150)
+plt.plot( charger_df7['Year-Month'], charger_df7['สถานีอัดประจุไฟฟ้า'], marker='o' )
+plt.suptitle("Cumulative Quantity Charger Station in Bangkok")
+```
+จากกราฟแสดงให้เห็นว่าในช่วง 3 ปีย้อนหลังมานี้ จำนวนสถานีอัดประจุไฟฟ้าสำหรับรถยนต์ไฟฟ้าที่จดทะเบียนกับ กฟน. มีอัตราเพิ่มขึ้นทุกปีและโดยเฉพาะอย่างในปี 2565 ที่มีอัตราการ เติบโตจากปี 2564 ถึง 35% YoY
+
+![image](https://user-images.githubusercontent.com/114766023/226325682-dc549937-4b99-4ec5-8314-9dd8976db1eb.png)
+จากกราฟจะเห็นได้ว่าจำนวนสถานีอัดประจุไฟฟ้าเพิ่มขึ้นอย่างรวดเร็วในปี 2565 ตั้งแต่ช่วงไตรมาส 2 เป็นต้นไป สอดคล้องนโยบายของภาครัฐที่มีออกมาเพื่อสนับสนุนการใช้และผลิตรถยนต์ไฟฟ้าในประเทศไทย
+
+3.5) ข้อมูลจำนวนสถานีอัดประจุไฟฟ้าสำหรับรถยนต์ไฟฟ้าประเภท DC ในประเทศไทย
+
+
 
 ## 4 : Question and Answer
 ในการศึกษาครั้งนี้จะสนใจเฉพาะรถยนต์ที่ไม่ใช่เพื่อการพานิชย์ซึ่งก็คือรถยนต์นั่งส่วนบุคคล (Passenger car) รถกระบะขนาดด 1 ตัน (Pickup 1 ton truck) และรถกลุ่ม PPV เท่านั้น
@@ -403,19 +439,6 @@ ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
             bbox=dict(boxstyle='round', alpha=0.2),
             arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )     
 ```
-  
-
-
-
-
-   ![image](https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png)
-
-   ![image](https://user-images.githubusercontent.com/114766023/226210773-a5b1a634-bf9d-4912-abe6-bbe9dddf335c.png)
- 	
-   ![image](https://user-images.githubusercontent.com/114766023/226210815-94db3279-77a3-4fe5-855e-0e62673ff223.png)
-  
-   ![image](https://user-images.githubusercontent.com/114766023/226210826-9fc543ff-8c5b-494b-9993-763f5925f309.png)
- 
    ![image](https://user-images.githubusercontent.com/114766023/226256039-244994bf-ddc7-49a8-bc2c-8334bb2f4962.png)
 
    ![image](https://user-images.githubusercontent.com/114766023/226210841-276c357a-2df6-402f-b173-95055f136a28.png)
