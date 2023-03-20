@@ -236,9 +236,9 @@ ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
 ปรับช่วงข้อมูลให้มาอยู่ในช่วง 5 ปีย้อนหลัง เพื่อให้เห็นแนวโน้มชัดขึ้น
 ![image](https://user-images.githubusercontent.com/114766023/226318066-9709ee02-6552-42e9-86a0-30344d163ab7.png)
 
-3.2) ข้อมูลผลิตรถนยนต์เพื่อการส่งออกต่างประเทศ
+3.2) ข้อมูลผลิตรถยนต์เพื่อการส่งออกต่างประเทศ
 
-เนื่องจากสนใขเแพาะ non-comnmercial เท่านั้น จึงต้องสร้าง column ผลรวมของ non-comnmercial car (Passener + Pickup ruck + PPV) ของแต่ภูมิภาคขึ้นมาจากก่อน 
+เนื่องจากเราสนใจเฉพาะ non-comnmercial เท่านั้น จึงต้องสร้าง column ผลรวมของ non-comnmercial car (Passener + Pickup ruck + PPV) ของแต่ภูมิภาคขึ้นมาจากก่อน 
 แล้วจึงลองพลอตด้วย line chart
 ```
 col_d  = []
