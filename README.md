@@ -95,7 +95,7 @@ new_register.info()
 RangeIndex: 335 entries, 0 to 334
 Data columns (total 12 columns):
 ```
-2.2.3)สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธค 2565 การไฟฟ้านครหลวง
+2.2.3)สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธ.ค. 2565 การไฟฟ้านครหลวง
 ลักษณะของข้อมูลที่พบและต้องจัดการคือ
 1. ข้อมูลมีแถวที่เป็น NaN ทั้งส่วนบนและส่วนล่างของ dataframe เนื่องจากข้อมูลเก็บมาในรูปแบบ Excel จึงต้องตัดออก และเลือกเฉพาะคอลัมน์ 'สถานีอัดประจุไฟฟ้า' มาใช้ในการวิเคราะห์
 2. ข้อมูลที่ได้รับมาอยู่ในรูปปี พุทธศักราช(B.E.) ส่งผลให้ไม่สามารถ แปลงข้อมูลให้อยู่ในรูปของ datetime format ได้ จึงต้องทำการแปลงให้เป็นคริสต์ศักราช (A.D.)
@@ -122,15 +122,17 @@ charger_df7['Year'] = charger_df7['Year']-543
 charger_df7.insert(2, 'Year-Month', pd.to_datetime(charger_df7[['Year', 'Month']].assign(Day=1)) )
 charger_df7
 ```
-2.2.4)ข้อมูลภูมิศาสตร์ระบุขอบเขตจังหวัดของประเทศไทย
+2.2.4)ข้อมูลภูมิศาสตร์ระบุขอบเขตจังหวัดของประเทศไทยและ DC EV Charging Station Thailand
+
 ```
 #Import Thailand map data
 #Thailand - Subnational Administrative Boundaries Dataframe from https://data.humdata.org/dataset/cod-ab-tha
 gdf = gpd.read_file('tha_admbnda_adm1_rtsd_20190221.shp')
 gdf.head()
 ```
-```
-```
+ลักษณะของข้อมูลที่พบและต้องจัดการคือ
+1. เนื่องจากไฟล์ DC EV Charging Station Thailand - Piyamate Wisanuvej เป็น kml file จึงนำไปแปลงเป็น csv file ด้วยเว็ป https://mygeodata.cloud/converter/ ก่อน ได้ออกมาทั้งหมด 7 ไฟล์ตามประเภทของผู้ให้บริการแล้วจึงต้องทำการรวมไฟล์ทั้ง 7 ไฟล์เป็น Dataframe เดียว
+2. DC EV Charging Station Thailand ข้อมูลที่ตั้งเป็นภาษาไทยและยากที่จะแยกเอาจังหวัดออกมา จึงใช้วิธีการเอาข้อมูล Latitude และ Longitude ไปเทียบกับ Polygon geometry เพื่อเอาชื่อจังหวัดจากแผนที่มาเพิ่มข้อมูลของจังหวัดของที่ตั้งสถานีก่อนนำมาวิเคราะห์
 ```
 #Read all data chager locations of each brand.
 df_ea24 = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/EA_24hr.csv?raw=true')
@@ -144,7 +146,6 @@ df_charger = pd.concat([df_ea24,df_eaop,df_elex,df_evolt,df_mg,df_pea,df_ptt])
 ```
 ```
 #Mapping Charging station point with province name by mapping Latitude and Longitude data with polygon data in GeodataFrame
-
 def get_province_name(lat, lon, gdf):
     point = Point(lon, lat)
     for index, row in gdf.iterrows():
@@ -154,28 +155,9 @@ def get_province_name(lat, lon, gdf):
     
 df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row['Latitude'], 
                                                                              row['Longitude'], gdf), axis=1)
-df_charger 
-```
-2.2)เนื่องจากข้อมูลบางชุดไม่ได้อยู่ในรูปของ datetime format ดังนั้นจึงต้องมีการแปลงข้อมูลที่มีอยู่ในอยู่ในรูป dattime โดยการ map ข้อมูลจากเดือนภาษาไทยให้เป็นตัวเลขและสร้าง Column ['Year-Month']
-และนำ Column ใหม่ที่สร้างขึ้นมาไปใช้งานต่อ
-
-```python
-month_map = {'มกราคม': 1, 'กุมภาพันธ์': 2, 'มีนาคม': 3, 'เมษายน': 4, 'พฤษภาคม': 5, 'มิถุนายน': 6, 'กรกฎาคม': 7, 'สิงหาคม': 8, 'กันยายน': 9, 'ตุลาคม': 10, 'พฤศจิกายน': 11, 'ธันวาคม': 12}
 ```
 
-```
-df_prod_dom_4.insert(2, 'Year-Month', pd.to_datetime(df_prod_dom_4[['Year', 'Month']].assign(Day=1)) )
-df_prod_dom_4
-```
 
-2.2) ข้อมูลที่ได้รับมาอยู่ในรูปปี พุทธศักราช(B.E.) ส่งผลให้ไม่สามารถ แปลงข้อมูลให้อยู่ในรูปของ datetime format ได้ จึงต้องทำการแปลงให้เป็นคริสต์ศักราช (A.D.)
-```
-charger_df7 = charger_df6.rename(columns={'ปี': 'Year','เดือน':'Month'})
-charger_df7['Year'] = charger_df7['Year']-543
-charger_df7.insert(2, 'Year-Month', pd.to_datetime(charger_df7[['Year', 'Month']].assign(Day=1)) )
-charger_df7
-
-```
 
 ## 3 : Question and Answer
 3.1) สถานการณ์การผลิตรถยนต์จากอดีตถึงปัจจุบันทั่วโลกเป็นอย่างไร
@@ -199,19 +181,19 @@ charger_df7
 
    ![image](https://user-images.githubusercontent.com/114766023/226210773-a5b1a634-bf9d-4912-abe6-bbe9dddf335c.png)
  	
-  ![image](https://user-images.githubusercontent.com/114766023/226210815-94db3279-77a3-4fe5-855e-0e62673ff223.png)
+   ![image](https://user-images.githubusercontent.com/114766023/226210815-94db3279-77a3-4fe5-855e-0e62673ff223.png)
   
-  ![image](https://user-images.githubusercontent.com/114766023/226210826-9fc543ff-8c5b-494b-9993-763f5925f309.png)
+   ![image](https://user-images.githubusercontent.com/114766023/226210826-9fc543ff-8c5b-494b-9993-763f5925f309.png)
+ 
+   ![image](https://user-images.githubusercontent.com/114766023/226256039-244994bf-ddc7-49a8-bc2c-8334bb2f4962.png)
 
-  ![image](https://user-images.githubusercontent.com/114766023/226256039-244994bf-ddc7-49a8-bc2c-8334bb2f4962.png)
-
-  ![image](https://user-images.githubusercontent.com/114766023/226210841-276c357a-2df6-402f-b173-95055f136a28.png)
+   ![image](https://user-images.githubusercontent.com/114766023/226210841-276c357a-2df6-402f-b173-95055f136a28.png)
 
 3.4) สถานีอัดประจุไฟฟ้าซึ่งเป็นปัจจัยที่มีส่วนในการเติบโตของรถยนต์ไฟฟ้าในประเทศมีความสอดคลองกับการขยายตัวของความต้องใช้รถไฟฟ้าหรือไม่
  
-![image](https://user-images.githubusercontent.com/114766023/226211114-d01f6d0c-f930-4789-ac66-14966ba3ee46.png)
+   ![image](https://user-images.githubusercontent.com/114766023/226211114-d01f6d0c-f930-4789-ac66-14966ba3ee46.png)
 
-![image](https://user-images.githubusercontent.com/114766023/226212639-69a0af9d-cf11-47bf-b9ea-62ebbed849be.png)
+   ![image](https://user-images.githubusercontent.com/114766023/226212639-69a0af9d-cf11-47bf-b9ea-62ebbed849be.png)
 
 ```
 
