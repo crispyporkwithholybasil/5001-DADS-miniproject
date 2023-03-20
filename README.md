@@ -4,7 +4,7 @@
     
 	Source :  https://data.thaiauto.or.th
   - ข้อมูลการผลิตรถยนต์ภายในประเทศไทย
-  - ข้อมูลผลิตรถนยนต์เพื่อการส่งออกรถยนต์ต่างประเทศ
+  - ข้อมูลผลิตรถนยนต์เพื่อการส่งออกต่างประเทศ
   - สถิติรถจดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
   
 1.2) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธค 2565 การไฟฟ้านครหลวง
@@ -159,6 +159,121 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 ## 3 : EDA
 3.1)	ปริมาณการผลิตยานยนต์สำหรับในประเทศ
 
+ทำการ Sum ข้อมูล ของแต่ละปีเพื่อนำมาพลอต bar chart ดูแนวโน้มของปริมาณการผลิตในแต่ละปีและเปรียบเทียบสัดส่วนของ Passenger car กับ Pickup 1 Ton
+
+```
+df_plot = df_plot1.groupby('Year').sum().reset_index()
+ax = df_plot.set_index('Year').plot(
+    kind='bar', stacked=True, figsize=(20, 10))
+
+# หัวตาราง
+plt.title('\nDomestic Production (Units)\n', fontsize=25)
+# ชื่อแกน x,y
+plt.xlabel('Year', fontsize=20)
+plt.ylabel('mils Unit', fontsize=20)
+# หมุน ชื่อแกน x
+plt.xticks(rotation=0, fontsize=15)
+plt.yticks(fontsize=15)
+# ขนาดคำอธิบาย
+plt.legend(fontsize='15')
+```
+![image](https://user-images.githubusercontent.com/114766023/226316032-e52da559-bd71-459a-abc9-7b8fc65129b0.png)
+
+```
+plt.figure(figsize=(15,5),dpi=150)
+ax = plt.gca()
+df_plot.plot.bar(ax=ax, x='Year',title='Domestic Production (Units)', ylabel='The number of players', xlabel='Year')
+plt.xticks(rotation=1)
+```
+![image](https://user-images.githubusercontent.com/114766023/226315791-6326c04e-1391-444a-8b77-da0c70d96ea6.png)
+
+เพื่อจะดูแนวโน้มของของ Non-commercialcar ในแต่ละเดือนจึงรวมปริมาณขอ Passenger car กับ Pickup 1 Ton ก่อน แล้วจึงพลอต Line chart และเพิ่มเหตุการณ์สำคัญที่น่าจะมี
+ผลต่ออุตสากรรมทเข้าไปในกราฟ
+```
+df_plot3 = df_plot1
+df_plot3['Total Non-Comercial'] = df_plot3.apply(lambda x: x['Passenger Car_Sub Total'] + x['Pickup 1 Ton_Sub Total'] , axis=1)
+df_plot3
+```
+```
+plt.figure(figsize=(15,5), dpi=150)
+
+# (Optional) Set the format of datetime displayed in x-axis
+ax = plt.gca()
+formatter = mpl.dates.DateFormatter('%Y')
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+
+
+ax.set_xlim(dt.datetime(2012, 1, 1), dt.datetime(2023, 1, 1))
+# xlabel
+# major tic
+
+
+# Alternative 1: Plot with the given x and y
+plt.plot(df_plot1['Year-Month'], df_plot3['Total Non-Comercial'],    # x and y to plot
+         color='midnightblue', marker='o', linestyle='solid')    # The matplotlib linestyle )
+ax.set_title('Non-commercial car production history past 10 Yrs')
+ax.annotate('The first-car tax scheme End', xy=(pd.Timestamp('2013-01-01'), 220000),
+            xytext=(pd.Timestamp('2012-05-01'), 100000),
+            bbox=dict(boxstyle='round', alpha=0.2),
+            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
+            
+ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
+            xytext=(pd.Timestamp('2018-01-01'), 23000),
+            bbox=dict(boxstyle='round', alpha=0.2),
+            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
+ax.annotate('2014 Thai coup détat', xy=(pd.Timestamp('2014-06-01'), 145000),
+            xytext=(pd.Timestamp('2014-02-01'), 60000),
+            bbox=dict(boxstyle='round', alpha=0.2),
+            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
+ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
+            xytext=(pd.Timestamp('2018-01-01'), 23000),
+            bbox=dict(boxstyle='round', alpha=0.2),
+            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )     
+```
+![image](https://user-images.githubusercontent.com/114766023/226317965-781dc0bd-a93e-49c0-8f9e-12296d83fa7a.png)
+
+ปรับช่วงข้อมูลให้มาอยู่ในช่วง 5 ปีย้อนหลัง เพื่อให้เห็นแนวโน้มชัดขึ้น
+![image](https://user-images.githubusercontent.com/114766023/226318066-9709ee02-6552-42e9-86a0-30344d163ab7.png)
+
+3.2) ข้อมูลผลิตรถนยนต์เพื่อการส่งออกต่างประเทศ
+
+เนื่องจากสนใขเแพาะ non-comnmercial เท่านั้น จึงต้องสร้าง column ผลรวมของ non-comnmercial car (Passener + Pickup ruck + PPV) ของแต่ภูมิภาคขึ้นมาจากก่อน 
+แล้วจึงลองพลอตด้วย line chart
+```
+col_d  = []
+for cont in continents:
+    passenger_col = f'{cont}_Passenger Car'
+    truck_col = f'{cont}_Pick up'
+    ppv_col = f'{cont}_PPV'
+    total_col = f'{cont}_Total'
+    other_col = f'{cont}_Other'
+    col_d.append(total_col)
+    col_d.append(other_col )
+    result_col = df_export_unit2[passenger_col] + df_export_unit2[truck_col] + df_export_unit2[ppv_col]
+    df_export_unit2[f'Total_Non_com_{cont}'] = result_col   
+df_export_dropped = df_export_unit2.drop(col_d, axis=1)
+df_plot_export_group = df_export_dropped.drop(df_export_dropped.iloc[:,3:32], axis=1)
+df_plot_export_group1 = df_plot_export_group.drop(df_plot_export_group.iloc[:,0:2], axis=1)
+df_plot_export_group1
+```
+
+```
+plt.figure(figsize=(10,5),dpi=150)
+ax = plt.gca()
+df_plot_export_group1.plot(kind='line',ax=ax, x='Year-Month', ylabel='Units', xlabel='Year',style='.-')
+plt.xticks(rotation=1)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=3)
+ax.set_xlabel('Year')
+ax.set_title('Total Non-commercial car production history past 10 Years by Region')
+```
+![image](https://user-images.githubusercontent.com/114766023/226210595-15079ccd-2325-4c31-b31a-ef57f9b1be1d.png)
+
+เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
+
+![image](https://user-images.githubusercontent.com/114766023/226210568-c4db94dc-d0f5-4178-857b-72a77bdc1f42.png)
+
+
 ## 4 : Question and Answer
 ในการศึกษาครั้งนี้จะสนใจเฉพาะรถยนต์ที่ไม่ใช่เพื่อการพานิชย์ซึ่งก็คือรถยนต์นั่งส่วนบุคคล (Passenger car) รถกระบะขนาดด 1 ตัน (Pickup 1 ton truck) และรถกลุ่ม PPV เท่านั้น
 
@@ -177,7 +292,8 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 คำตอบ 	ในที่นี้ใช้ข้อมูลยอดการผลิตสำหรับในประเทศแทนทิศทางของอุตสาหกรรมรถยนต์ภายในประเทศ เนื่องจากหากยอดสั่งซื้อ/ผลิตสูงขึ้นหรือลดลง อุตสาหกรรมและธุรกิจที่เกี่ยวข้องในประเทศก็จะได้รับผลกระทบและไปใน
 ทิศทางเดียวกัน โดยจากข้อมูลและกราฟสรุปได้ว่า
 
-1. อุตหกรรมรถยนต์ในประเทศมีการฟื้ตัวหลังจากวิกฤตการระบาดของโรคโควิด-19 แต่ยังไม่เท่ากับช่วงปี 2020 อาจจะด้วยปัจจัยจากสภาพเศรษฐกิจ ที่อยู่ในภาวะเงินเฟ้อซึ่งยังไม่สามารถระบุได้ชัดเจนด้วยข้อมูลที่มี
+1. อุตสาหกรรมรถยนต์ในประเทศมีการฟื้นตัวหลังจากวิกฤตการระบาดของโรคโควิด-19 แต่ยังไม่เท่ากับช่วงปี 2020 อาจจะด้วยปัจจัยจากสภาพเศรษฐกิจที่อยู่ในภาวะเงินเฟ้อซึ่งยังไม่สามารถระบุได้ชัดเจนด้วยข้อมูลที่มี
+
 
 2. สัดส่วนการผลิต/ซื้อรถกระบะมีมากกว่ารถยนต์ส่วนบุคคล(รถเก๋ง)และสัดส่่วนของรถกระบะยังเพิ่มขึ้นอย่างต่อเนื่อง
 
@@ -218,81 +334,6 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 
 	
 
-```
-col_d  = []
-for cont in continents:
-    passenger_col = f'{cont}_Passenger Car'
-    truck_col = f'{cont}_Pick up'
-    ppv_col = f'{cont}_PPV'
-    total_col = f'{cont}_Total'
-    other_col = f'{cont}_Other'
-    col_d.append(total_col)
-    col_d.append(other_col )
-    result_col = df_export_unit2[passenger_col] + df_export_unit2[truck_col] + df_export_unit2[ppv_col]
-    df_export_unit2[f'Total_Non_com_{cont}'] = result_col   
-df_export_dropped = df_export_unit2.drop(col_d, axis=1)
-df_plot_export_group = df_export_dropped.drop(df_export_dropped.iloc[:,3:32], axis=1)
-df_plot_export_group1 = df_plot_export_group.drop(df_plot_export_group.iloc[:,0:2], axis=1)
-df_plot_export_group1
-```
-```
-plt.figure(figsize=(10,5),dpi=150)
-ax = plt.gca()
-df_plot_export_group1.plot(kind='line',ax=ax, x='Year-Month', ylabel='Units', xlabel='Year',style='.-')
-plt.xticks(rotation=1)
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=3)
-ax.set_xlabel('Year')
-ax.set_title('Total Non-commercial car production history past 10 Years by Region')
-```
-![image](https://user-images.githubusercontent.com/114766023/226210595-15079ccd-2325-4c31-b31a-ef57f9b1be1d.png)
-
-เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
-```
-fig, ax = plt.subplots(
-                       sharex='col',
-                       sharey='row',
-                       )
-fig.dpi = 200
-fig.size=(15,5)
-
-plt.subplot(4, 2, 1)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Asia'] ,color = 'blue')   # Add the new axis to the grid
-plt.title('Asia') 
-
-plt.subplot(4, 2, 2)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Australia and Oceania'],color = 'green' )   # Add the new axis to the grid
-plt.title('Australia and Oceania') 
-
-plt.subplot(4, 2, 3)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Middle East'],color = 'red'  )   # Add the new axis to the grid
-plt.title('Middle East') 
-
-plt.subplot(4, 2, 4)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Africa'] ,color = 'purple')   # Add the new axis to the grid
-plt.title('Africa') 
-
-plt.subplot(4, 2, 5)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Europe'] ,color = 'yellow')   # Add the new axis to the grid
-plt.title('Europe') 
-
-plt.subplot(4, 2, 6)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Central & South America'] ,color = 'cyan')   # Add the new axis to the grid
-plt.title('Central & South America')
-
-plt.subplot(4, 2, 7)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_North America'] ,color = 'indigo')   # Add the new axis to the grid
-plt.title('North America')
-
-plt.subplot(4, 2, 8)
-plt.plot( df_plot_export_group1['Year-Month'], df_plot_export_group1['Total_Non_com_Others'] ,color = 'darkgray')   # Add the new axis to the grid
-plt.title('Others')
-
-fig.subplots_adjust(wspace=0.5, hspace=0.7)
-plt.suptitle("Total Production Non-Comercial Car for Excport by Region")
-```
-
-
-  ![image](https://user-images.githubusercontent.com/114766023/226210568-c4db94dc-d0f5-4178-857b-72a77bdc1f42.png)
 ```
 df_plot3 = df_plot1
 df_plot3['Total Non-Comercial'] = df_plot3.apply(lambda x: x['Passenger Car_Sub Total'] + x['Pickup 1 Ton_Sub Total'] , axis=1)
@@ -388,7 +429,7 @@ Average Charging station per Province: 9
 ![image](https://user-images.githubusercontent.com/114766023/226212245-bb66fde0-6f97-4130-ae0b-ca987f8dc084.png)
 ![image](https://user-images.githubusercontent.com/114766023/226211370-14d9a961-f8de-4d21-a0d6-680de36b4ea5.png)
 
-## 4 : Conclusion and Suggestion
+## 5 : Conclusion and Suggestion
 ข้อสรุปและความคิดเห็น
 จากข้อมูลที่นยำเสนอมาสรุปได้ว่าอุตสาหกรรมยนต์ไทยฟื้นตัวขึ้นเกือบจะเท่าก่อนการระบาดของโควิด-19 และแนวโน้มค่อนข้างสดใส นอกจากนี้กระแสการเปลี่ยนผ่านสู่ยุครถยนต์ไฟฟ้ายังเกิดขึ้นอย่างรวดเร็ว
 ตามสัดส่วนและประมาณยอดจดทะเบียนที่เพิ่มขึ้นอันเนื่องมาจากการส่งเสริมของรัฐ แต่สาธารณูปโถคสำคัญคือสถานีอัดประจุไฟฟ้ายังมีน้อยและกระจุกตามเมืองใหญ่ซึ่งทั้งภาครัฐและเอกชนต้องเร่งติดตั้ง
