@@ -293,12 +293,11 @@ new_register_df11.plot( kind='barh', ax=ax,stacked=True,
 left, right = ax.get_xlim()    
 ax.set_xlim(left, right+0.7) 
 ```
-![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
-
-
 ![image](https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png)
 
 เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป้นเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
+
+![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
 
 ![image](https://user-images.githubusercontent.com/114766023/226322871-4f7b4486-0347-4ec5-b027-860fbb6a32d0.png)
 
@@ -336,6 +335,55 @@ plt.suptitle("Cumulative Quantity Charger Station in Bangkok")
 3.5) ข้อมูลจำนวนสถานีอัดประจุไฟฟ้าสำหรับรถยนต์ไฟฟ้าประเภท DC ในประเทศไทย
 
 
+```
+#Plot charging station point on Thailand map to see the distribution of EV charger.
+gdf_points = gpd.GeoDataFrame(df_charger, geometry=geometry)
+
+# Plot the GeoJSON file and the points on the same map
+ax = gdf.plot(figsize=(10,10), alpha=1, color='seashell',edgecolor='k')
+gdf_points.plot(ax=ax,column='Provider', categorical=True, legend=True, cmap = 'Paired', markersize=10)
+
+# Show the plot
+plt.show()
+```
+จากแผนที่จะเห็นว่ามีจุดของสถานีอัดประจุอยู๋เกือบทุกจังหวัด แต่ส่วนมากจะกระจุกตัวอยู๋ตามจังหวัดที่มีความสำคัญทางเศรษฐกิจ ซึ่งคาดว่าจะเป็น กรุงเทพมหานคร และปริมณฑล ชลบุรี ระยอง นครราชสีมา เชียงใหม่
+เพื่อให้เห็นภาพชัดยิ่งขึ้นว่าจริงหรือไม่ จึงพลอตจำนวนสถานีอัดประจุไฟฟ้าเป็น Chroropleth ลงบนแผนที่เพื่อให้เห็นภาพชัดขึ้นต่อไป
+
+```
+#Count charging station by Province
+df_charger_prov = df_charger.pivot_table(index='province_name',values='Name',aggfunc='count').reset_index()
+df_charger_prov= df_charger_prov.rename({'Name':'Number_charging_station'}, axis='columns').sort_values(by=["Number_charging_station"], ascending=True)
+df_charger_prov
+```
+![image](https://user-images.githubusercontent.com/114766023/226327454-a0f8116a-c704-4cf3-aa0f-d68791879e05.png)
+
+```
+#Merge charging number of charging station each province with GeoDataframe.
+gdf_merged = pd.merge(gdf, df_charger_prov,left_on='ADM1_EN', right_on='province_name', how='left')
+gdf_merged = gdf_merged.fillna(0)
+gdf_merged['Number_charging_station'] = gdf_merged['Number_charging_station'].astype(int)
+gdf_merged
+```
+
+![image](https://user-images.githubusercontent.com/114766023/226212147-2435c9f9-dcdf-418a-9656-28f061fa4a49.png)
+
+![image](https://user-images.githubusercontent.com/114766023/226211340-bd80a0f8-11dd-4fcb-9747-6688b658e411.png)
+![image](https://user-images.githubusercontent.com/114766023/226211345-8abaf546-e5b8-479b-8a1f-4c1d9e542bcf.png)
+จาก Chroropleth เห็นได้ชัดว่าสถานีอัดประจุไฟฟ้าอยู่หนาแน่นตามจังหวัดที่กล่าวมาจริง
+
+![image](https://user-images.githubusercontent.com/114766023/226211350-cae12129-5469-4844-b329-92cbdcf322a8.png)
+```
+print( f"Average Charging station per Province: {gdf_merged3.loc[ :, 'Number_charging_station'].mean():.0f}") 
+```
+Average Charging station per Province: 9
+
+จาก KDE plot จะเห็นว่าจำนวนสถานีอัดประจุไฟฟ้าต่อจัดหวัดส่วนใหญ่นั้นมีน้อยกว่า 20 สถานี โดยเฉลี่ยอยู่ที่ 9 สถานีต่อจังหวัด
+![image](https://user-images.githubusercontent.com/114766023/226211351-d3a1e803-d579-468f-b02d-3af08a952494.png)
+
+กราฟแท่งนี้แสดงให้เห็นจำนวนสถานีอัดประจุไฟฟ้าในแต่ละจังหวัดอย่างชัดเจน โดยพบว่ามี 4 จังหวัดที่ยังไม่มีสถานีอัดประจุไฟฟ้าไปติดตั้ง คือ กาฬสิน สมุทรสาคร อุทัยธานี และ ระนอง และยังก็พบว่ามีเพียง 6 จังหวัดที่มีสถานีอัดประจุมากกว่า 20 สถานีได้แก่ กรุงเทพมหานคร นนทบุรี นครราชสีมา สมุทรปราการ ชลบุรี และเชียงใหม่ ตามลำดับ ดังตารางและกราฟด้านล่าง
+
+![image](https://user-images.githubusercontent.com/114766023/226212245-bb66fde0-6f97-4130-ae0b-ca987f8dc084.png)
+![image](https://user-images.githubusercontent.com/114766023/226211370-14d9a961-f8de-4d21-a0d6-680de36b4ea5.png)
 
 ## 4 : Question and Answer
 ในการศึกษาครั้งนี้จะสนใจเฉพาะรถยนต์ที่ไม่ใช่เพื่อการพานิชย์ซึ่งก็คือรถยนต์นั่งส่วนบุคคล (Passenger car) รถกระบะขนาดด 1 ตัน (Pickup 1 ton truck) และรถกลุ่ม PPV เท่านั้น
@@ -391,88 +439,6 @@ plt.suptitle("Cumulative Quantity Charger Station in Bangkok")
 ซึ่งพบว่าจำนวนสถานีอัดประจุไฟฟ้าต่อจังหวัดส่วนใหญ่น้อยกว่า 20 สถานี โดยเฉลี่ยอยู่ที่ 9 สถานีต่อจังหวัดเท่านั้น
 โดยพบว่ามี 4 จังหวัดที่ยังไม่มีสถานีอัดประจุไฟฟ้าไปติดตั้ง คือ กาฬสิน สมุทรสาคร อุทัยธานี และ ระนอง 
 และยังก็พบว่ามีเพียง 6 จังหวัดที่มีสถานีอัดประจุมากกว่า 20 สถานี ได้แก่ กรุงเทพมหานคร นนทบุรี นครราชสีมา สมุทรปราการ ชลบุรี และเชียงใหม่ ตามลำดับ
-
-
-
-
-	
-
-```
-df_plot3 = df_plot1
-df_plot3['Total Non-Comercial'] = df_plot3.apply(lambda x: x['Passenger Car_Sub Total'] + x['Pickup 1 Ton_Sub Total'] , axis=1)
-df_plot3
-```
-```
-plt.figure(figsize=(15,5), dpi=150)
-
-# (Optional) Set the format of datetime displayed in x-axis
-ax = plt.gca()
-formatter = mpl.dates.DateFormatter('%Y')
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-
-
-
-ax.set_xlim(dt.datetime(2012, 1, 1), dt.datetime(2023, 1, 1))
-# xlabel
-# major tic
-
-
-# Alternative 1: Plot with the given x and y
-plt.plot(df_plot1['Year-Month'], df_plot3['Total Non-Comercial'],    # x and y to plot
-         color='midnightblue', marker='o', linestyle='solid')    # The matplotlib linestyle )
-ax.set_title('Non-commercial car production history past 10 Yrs')
-ax.annotate('The first-car tax scheme End', xy=(pd.Timestamp('2013-01-01'), 220000),
-            xytext=(pd.Timestamp('2012-05-01'), 100000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-            
-ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
-            xytext=(pd.Timestamp('2018-01-01'), 23000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-ax.annotate('2014 Thai coup détat', xy=(pd.Timestamp('2014-06-01'), 145000),
-            xytext=(pd.Timestamp('2014-02-01'), 60000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
-            xytext=(pd.Timestamp('2018-01-01'), 23000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )     
-```
-   ![image](https://user-images.githubusercontent.com/114766023/226256039-244994bf-ddc7-49a8-bc2c-8334bb2f4962.png)
-
-   ![image](https://user-images.githubusercontent.com/114766023/226210841-276c357a-2df6-402f-b173-95055f136a28.png)
-
-
- 
-   ![image](https://user-images.githubusercontent.com/114766023/226211114-d01f6d0c-f930-4789-ac66-14966ba3ee46.png)
-
-   ![image](https://user-images.githubusercontent.com/114766023/226212639-69a0af9d-cf11-47bf-b9ea-62ebbed849be.png)
-
-```
-
-```
- จากแผนที่จะเห็นว่ามีจุดของสถานีอัดประจุอยู๋เกือบทุกจังหวัด แต่ส่วนมากจะกระจุกตัวอยู๋ตามจังหวัดที่มีความสำคัญทางเศรษฐกิจ ซึ่งคาดว่าจะเป็น กรุงเทพมหานคร และปริมณฑล ชลบุรี ระยอง นครราชสีมา เชียงใหม่
-เพื่อให้เห็นภาพชัดยิ่งขึ้นว่าจริงหรือไม่ จึงพลอตจำนวนสถานีอัดประจุไฟฟ้าเป็น Chroropleth ลงบนแผนที่เพื่อให้เห็นภาพชัดขึ้นต่อไป
-![image](https://user-images.githubusercontent.com/114766023/226212147-2435c9f9-dcdf-418a-9656-28f061fa4a49.png)
-
-![image](https://user-images.githubusercontent.com/114766023/226211340-bd80a0f8-11dd-4fcb-9747-6688b658e411.png)
-![image](https://user-images.githubusercontent.com/114766023/226211345-8abaf546-e5b8-479b-8a1f-4c1d9e542bcf.png)
-จาก Chroropleth เห็นได้ชัดว่าสถานีอัดประจุไฟฟ้าอยู่หนาแน่นตามจังหวัดที่กล่าวมาจริง
-
-![image](https://user-images.githubusercontent.com/114766023/226211350-cae12129-5469-4844-b329-92cbdcf322a8.png)
-```
-print( f"Average Charging station per Province: {gdf_merged3.loc[ :, 'Number_charging_station'].mean():.0f}") 
-```
-Average Charging station per Province: 9
-
-จาก KDE plot จะเห็นว่าจำนวนสถานีอัดประจุไฟฟ้าต่อจัดหวัดส่วนใหญ่นั้นมีน้อยกว่า 20 สถานี โดยเฉลี่ยอยู่ที่ 9 สถานีต่อจังหวัด
-![image](https://user-images.githubusercontent.com/114766023/226211351-d3a1e803-d579-468f-b02d-3af08a952494.png)
-
-กราฟแท่งนี้แสดงให้เห็นจำนวนสถานีอัดประจุไฟฟ้าในแต่ละจังหวัดอย่างชัดเจน โดยพบว่ามี 4 จังหวัดที่ยังไม่มีสถานีอัดประจุไฟฟ้าไปติดตั้ง คือ กาฬสิน สมุทรสาคร อุทัยธานี และ ระนอง และยังก็พบว่ามีเพียง 6 จังหวัดที่มีสถานีอัดประจุมากกว่า 20 สถานีได้แก่ กรุงเทพมหานคร นนทบุรี นครราชสีมา สมุทรปราการ ชลบุรี และเชียงใหม่ ตามลำดับ ดังตารางและกราฟด้านล่าง
-
-![image](https://user-images.githubusercontent.com/114766023/226212245-bb66fde0-6f97-4130-ae0b-ca987f8dc084.png)
-![image](https://user-images.githubusercontent.com/114766023/226211370-14d9a961-f8de-4d21-a0d6-680de36b4ea5.png)
 
 ## 5 : Conclusion and Suggestion
 ข้อสรุปและความคิดเห็น
