@@ -188,49 +188,8 @@ plt.xticks(rotation=1)
 ![image](https://user-images.githubusercontent.com/114766023/226315791-6326c04e-1391-444a-8b77-da0c70d96ea6.png)
 
 เพื่อจะดูแนวโน้มของของ Non-commercialcar ในแต่ละเดือนจึงรวมปริมาณขอ Passenger car กับ Pickup 1 Ton ก่อน แล้วจึงพลอต Line chart และเพิ่มเหตุการณ์สำคัญที่น่าจะมี
-ผลต่ออุตสากรรมทเข้าไปในกราฟ
-```
-df_plot3 = df_plot1
-df_plot3['Total Non-Comercial'] = df_plot3.apply(lambda x: x['Passenger Car_Sub Total'] + x['Pickup 1 Ton_Sub Total'] , axis=1)
-df_plot3
-```
-```
-plt.figure(figsize=(15,5), dpi=150)
+ผลต่ออุตสากรรมเข้าไปในกราฟ
 
-# (Optional) Set the format of datetime displayed in x-axis
-ax = plt.gca()
-formatter = mpl.dates.DateFormatter('%Y')
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-
-
-
-ax.set_xlim(dt.datetime(2012, 1, 1), dt.datetime(2023, 1, 1))
-# xlabel
-# major tic
-
-
-# Alternative 1: Plot with the given x and y
-plt.plot(df_plot1['Year-Month'], df_plot3['Total Non-Comercial'],    # x and y to plot
-         color='midnightblue', marker='o', linestyle='solid')    # The matplotlib linestyle )
-ax.set_title('Non-commercial car production history past 10 Yrs')
-ax.annotate('The first-car tax scheme End', xy=(pd.Timestamp('2013-01-01'), 220000),
-            xytext=(pd.Timestamp('2012-05-01'), 100000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-            
-ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
-            xytext=(pd.Timestamp('2018-01-01'), 23000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-ax.annotate('2014 Thai coup détat', xy=(pd.Timestamp('2014-06-01'), 145000),
-            xytext=(pd.Timestamp('2014-02-01'), 60000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )
-ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
-            xytext=(pd.Timestamp('2018-01-01'), 23000),
-            bbox=dict(boxstyle='round', alpha=0.2),
-            arrowprops=dict( arrowstyle='wedge,tail_width=0.5',alpha=0.1) )     
-```
 ![image](https://user-images.githubusercontent.com/114766023/226317965-781dc0bd-a93e-49c0-8f9e-12296d83fa7a.png)
 
 ปรับช่วงข้อมูลให้มาอยู่ในช่วง 5 ปีย้อนหลัง เพื่อให้เห็นแนวโน้มชัดขึ้น
@@ -238,35 +197,9 @@ ax.annotate('Covid-19:Lock down', xy=(pd.Timestamp('2020-04-01'), 24000),
 
 3.2) ข้อมูลผลิตรถยนต์เพื่อการส่งออกต่างประเทศ
 
-เนื่องจากเราสนใจเฉพาะ non-comnmercial เท่านั้น จึงต้องสร้าง column ผลรวมของ non-comnmercial car (Passener + Pickup ruck + PPV) ของแต่ภูมิภาคขึ้นมาจากก่อน 
-แล้วจึงลองพลอตด้วย line chart
-```
-col_d  = []
-for cont in continents:
-    passenger_col = f'{cont}_Passenger Car'
-    truck_col = f'{cont}_Pick up'
-    ppv_col = f'{cont}_PPV'
-    total_col = f'{cont}_Total'
-    other_col = f'{cont}_Other'
-    col_d.append(total_col)
-    col_d.append(other_col )
-    result_col = df_export_unit2[passenger_col] + df_export_unit2[truck_col] + df_export_unit2[ppv_col]
-    df_export_unit2[f'Total_Non_com_{cont}'] = result_col   
-df_export_dropped = df_export_unit2.drop(col_d, axis=1)
-df_plot_export_group = df_export_dropped.drop(df_export_dropped.iloc[:,3:32], axis=1)
-df_plot_export_group1 = df_plot_export_group.drop(df_plot_export_group.iloc[:,0:2], axis=1)
-df_plot_export_group1
-```
+พบว่าไทยส่งออกรถยนต์ไปตลาด เอเชียนเป็นอันดับหนึ่งและอันดับสองคือออสเตรเลีย 
+โดยที่หลังจากการระบาดของโรคโควิด-19(ปี 2020-21) พบว่ายอดการผลิตเพื่อส่งออกสู่ทุกภูมิภาคกลับมาเป็นขาขึ้นโดยเฉพาะอย่างยิ่งตลาดเอเชียและออสเตรเลียที่เพิ่มสูงขึ้นจนมากกว่าก่อนการระบาดของโควิด-19
 
-```
-plt.figure(figsize=(10,5),dpi=150)
-ax = plt.gca()
-df_plot_export_group1.plot(kind='line',ax=ax, x='Year-Month', ylabel='Units', xlabel='Year',style='.-')
-plt.xticks(rotation=1)
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=3)
-ax.set_xlabel('Year')
-ax.set_title('Total Non-commercial car production history past 10 Years by Region')
-```
 ![image](https://user-images.githubusercontent.com/114766023/226348572-163556d8-623e-4b87-84c5-5d27e66a8218.png)
 
 เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
@@ -301,13 +234,17 @@ ax.set_xlim(left, right+0.7)
 
 ![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
 
-![image](https://user-images.githubusercontent.com/114766023/226322871-4f7b4486-0347-4ec5-b027-860fbb6a32d0.png)
+|Year|HEV|PHEV|BEV|
+|---|---|---|---|
+|2563|12995|1084|1288|
+|2564|34339|7060|1958|
+|2565|62137|11117|9454|
 
 เทียบสัดส่วน 2564-2565 YoY
 ![image](https://user-images.githubusercontent.com/114766023/226323639-6300e468-d4e2-4597-89a1-f5ba846f2851.png)
 
 
-เปรียบเทียบปริมาณรถ EV ที่จดทะเลียนใหม่แต่ละประเภท และดูอัตราการเติบโตเทียบกับปีก่อนหน้า (%YOY Growth rate)
+เปรียบเทียบปริมาณรถ EV ที่จดทะเบียนใหม่แต่ละประเภท และดูอัตราการเติบโตเทียบกับปีก่อนหน้า (%YOY Growth rate)
 ![image](https://user-images.githubusercontent.com/114766023/226210815-94db3279-77a3-4fe5-855e-0e62673ff223.png)
 ![image](https://user-images.githubusercontent.com/114766023/226324759-7059ddf1-e77b-4af6-b5a1-8e02a6e9522d.png)
 
