@@ -271,7 +271,9 @@ ax.set_title('Total Non-commercial car production history past 10 Years by Regio
 
 เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
 
-![image](https://user-images.githubusercontent.com/114766023/226210568-c4db94dc-d0f5-4178-857b-72a77bdc1f42.png)
+
+![image](https://user-images.githubusercontent.com/83213407/226346714-f79f061b-b144-4f14-b16c-b9841e9b21c1.png)
+
 
 
 3.3) ปริมาณรถยนต์จดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
