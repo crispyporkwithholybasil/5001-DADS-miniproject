@@ -202,13 +202,6 @@ plt.xticks(rotation=1)
 
 ![image](https://user-images.githubusercontent.com/114766023/226348572-163556d8-623e-4b87-84c5-5d27e66a8218.png)
 
-เนื่องจากกราฟมีจำนวนหลายเส้นและตัดกันจึงทำการแยกกราฟของแต่ละภูมิภาคออกเป็น subplot เพื่อให้เห็นแนวโน้มที่ชัดเจนขึ้น
-
-
-![image](https://user-images.githubusercontent.com/83213407/226346714-f79f061b-b144-4f14-b16c-b9841e9b21c1.png)
-
-
-
 3.3) ปริมาณรถยนต์จดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
 ดูแนวโน้มของรถยนต์จดทะเบียนใหม่ย้อนหลัง 5 ปี และดูสัดส่วนของรถยนต์แต่ละประเภทเชื้อเพลิงในแต่บะปีด้วย Stack bar chart
 (ICE =  internal combustion engine, PHEV = Plug-in Hybrid Electic vehicle, HERV = Hybrid Electric Vehicle, BEV = Baterry Electric Vehicle)
