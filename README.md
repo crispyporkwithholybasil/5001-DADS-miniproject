@@ -55,10 +55,15 @@ df_export_unit = pd.read_excel("https://github.com/crispyporkwithholybasil/5001-
 RangeIndex: 132 entries, 0 to 131
 Data columns (total 47 columns):
 ```
+![image](https://user-images.githubusercontent.com/114766023/226757030-b429c9c9-f8d9-40ed-b3ac-2245d47813a0.png)
+
 ลักษณะของข้อมูลที่พบและต้องจัดการคือ
-	1. ส่วนของ dataframe header เป็น 2 ชั้น จึงต้องทำการรวบให้เหลือเพียง 1ชั้น 
-	2. ชื่อเดือนมี white space ปนอยู่และตัวเลขใน dataframe มีจุลภาค(comma)ต้องกำจัดออกก่อนจะแปลงเป็น data type ที่ต้องการ
-	3. เดือนเป็น ชื่อเดือนภาษาไทย ต้องทำการเปลี่ยนเป็นตัวเลขเพื่อให้สามารถแปลงวัน Datetime format แล้วสามารารถนำไปใช้งานต่อได้
+
+1. ส่วนของ dataframe header เป็น 2 ชั้น จึงต้องทำการรวบให้เหลือเพียง 1ชั้น 
+
+2. ชื่อเดือนมี white space ปนอยู่และตัวเลขใน dataframe มีจุลภาค(comma)ต้องกำจัดออกก่อนจะแปลงเป็น data type ที่ต้องการ
+
+3. เดือนเป็น ชื่อเดือนภาษาไทย ต้องทำการเปลี่ยนเป็นตัวเลขเพื่อให้สามารถแปลงวัน Datetime format แล้วสามารารถนำไปใช้งานต่อได้
 ```
 df_prod_dom.columns = df_prod_dom.columns.map('_'.join)
 df_prod_dom_1 = df_prod_dom.rename(columns={'Unnamed: 1_level_0_ปี': 'Year','Unnamed: 2_level_0_เดือน/ไตรมาส': 'Month'})
@@ -85,6 +90,15 @@ df_prod_dom_3['Month'] = df_prod_dom_3['Month'].map(month_map)
 df_export_unit2['Month'] = df_export_unit2['Month'].map(month_map)
 df_export_unit2['Year'] = df_export_unit2['Year'].astype(int)
 ```
+
+|index|Year|Month|Year-Month|Passenger Car\_&lt;=1,500 CC|Passenger Car\_&gt;1,500 CC|Passenger Car\_Sub Total|Pickup 1 Ton\_Single Cab|Pickup 1 Ton\_Double Cab|Pickup 1 Ton\_PPV|Pickup 1 Ton\_Sub Total|
+|---|---|---|---|---|---|---|---|---|---|---|
+|0|2012|1|2012-01-01 00:00:00|26770|13508|40278|34498|52510|10167|97175|
+|1|2012|2|2012-02-01 00:00:00|31309|15219|46528|40410|65555|11633|117598|
+|2|2012|3|2012-03-01 00:00:00|35848|16930|53619|46375|71301|15636|133312|
+|3|2012|4|2012-04-01 00:00:00|38554|13130|52425|29898|50587|9466|89951|
+|4|2012|5|2012-05-01 00:00:00|57004|23626|81639|41174|70057|11584|122815|
+
 2.2.2) ปริมาณรถยนต์จดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
 ข้อมูลมีคุณภาพดี ไม่ต้องทำการ Cleansing ใดๆ
 ```
@@ -199,6 +213,10 @@ plt.xticks(rotation=1)
 
 พบว่าไทยส่งออกรถยนต์ไปตลาด เอเชียนเป็นอันดับหนึ่งและอันดับสองคือออสเตรเลีย 
 โดยที่หลังจากการระบาดของโรคโควิด-19(ปี 2020-21) พบว่ายอดการผลิตเพื่อส่งออกสู่ทุกภูมิภาคกลับมาเป็นขาขึ้นโดยเฉพาะอย่างยิ่งตลาดเอเชียและออสเตรเลียที่เพิ่มสูงขึ้นจนมากกว่าก่อนการระบาดของโควิด-19
+
+![image](https://user-images.githubusercontent.com/114766023/226757738-e20a3cf0-54d3-416b-9736-933c00e5bc87.png)
+
+เนื่องจากกราฟทับซ้อนกันมากจึงแยกกราฟออกเป็น subplot ตาม Region 
 
 ![image](https://user-images.githubusercontent.com/114766023/226348572-163556d8-623e-4b87-84c5-5d27e66a8218.png)
 
