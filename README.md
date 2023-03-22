@@ -311,8 +311,9 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 
 ในขณะที่ PHEV กับ HEV ถึงจะมียอดเพิ่มขึ้นแต่เทียบเป็นอัตราการเติบโตแล้วกลับพบว่าลดลงสวนทางกับ BEV ซึ่งอาจจะกล่าวได้ว่าประเทศไทยกำลังเปลี่ยนผ่านสู่ยุครถยนต์ไฟฟ้าแบบใช้ไฟฟ้า 100% เช่น BEV และสัดส่วนของรถไฟฟ้ามีแนวโน้มจะกินส่วนแบ่งรถยนต์สันดาปภายใน (Internal Combustion Engine - ICE) เพิ่มขึ้นทุกปีตามมาตราการที่รัฐส่งเสริมทั้งฝั่งผู้บริโภคคือการลดภาษีและฝั่งผู้ผลิตที่ต้องผลิตรถไฟฟ้าให้มากกว่ายอดที่นำเข้าทั้งคัน (CBU) มาจำหน่าย
 
-![image](https://user-images.githubusercontent.com/114766023/226990386-62985798-b125-4f1c-8f8c-66b744753edc.png)
-**Source : https://www.bangkokbiznews.com/business/986222**
+![image](https://user-images.githubusercontent.com/114766023/226993286-67206ba9-b1b3-469e-ab79-bf5f65a80133.png)
+
+**Source : https://www.bangkokbiznews.com/business/988550**
 
 3.4) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้าถึง ธ.ค. 2565 การไฟฟ้านครหลวง ใช้ในการหาจำนวนสถานีอัดประจุในพื้นที่ กทม.
 
