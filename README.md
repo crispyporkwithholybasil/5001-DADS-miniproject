@@ -11,22 +11,22 @@
 ## 1 : Datset
 1.1) ข้อมูลจากศูนย์สารสนเทศยานยนต์
     
-	Source :  https://data.thaiauto.or.th
+Source :  https://data.thaiauto.or.th
   - ข้อมูลการผลิตรถยนต์ภายในประเทศไทย
   - ข้อมูลผลิตรถยนต์เพื่อการส่งออกต่างประเทศ
   - สถิติรถจดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
   
 1.2) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธ.ค. 2565 การไฟฟ้านครหลวง
      
-	Source : https://data.go.th/dataset/mea-customer
+Source : https://data.go.th/dataset/mea-customer
 		 
 1.3) ข้อมูล DC EV Charging Station Thailand - Piyamate Wisanuvej.kml
     
-	Source : http://bit.ly/401dOwX
+Source : http://bit.ly/401dOwX
 
 1.4) ข้อมูลภูมิศาสตร์ระบุขอบเขตจังหวัดของประเทศไทย Thailand - Subnational Administrative Boundaries Dataframe 
      
-	Source : https://data.humdata.org/dataset/cod-ab-tha
+Source : https://data.humdata.org/dataset/cod-ab-tha
 
 ## 2 : Data Cleansing and EDA
 
@@ -119,15 +119,43 @@ df_export_unit2['Year'] = df_export_unit2['Year'].astype(int)
 
 2.2.2) ปริมาณรถยนต์จดทะเบียนใหม่จำแนกตามประเภทเชื้อเพลิง
 ข้อมูลมีคุณภาพดี ไม่ต้องทำ Data Cleansing ใดๆ
+
 ```
 new_register = pd.read_csv("https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/New_Car_with_Fuel.csv?raw=true")
-new_register.info()
 ```
+|index|Year|Month|Type|ICEV|HEV|PHEV|HEV &amp; PHEV|BEV|Total xEV|Not Specific|Other|Total|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|0|2561|01|Bus|939|0|0|0|0|0|0|0|939|
+|1|2561|01|Mini MPV|0|0|0|0|0|0|0|0|0|
+|2|2561|01|Passenger Car and Pickup Truck|89115|0|0|1049|0|1049|2|0|89117|
+|3|2561|01|Three Wheeler|14|0|0|0|0|0|0|0|14|
+|4|2561|01|Truck|4227|0|0|0|0|0|0|1504|5731|
+
 ```
+<class 'pandas.core.frame.DataFrame'>
 RangeIndex: 335 entries, 0 to 334
 Data columns (total 12 columns):
+ #   Column        Non-Null Count  Dtype 
+---  ------        --------------  ----- 
+ 0   Year          335 non-null    int64 
+ 1   Month         335 non-null    object
+ 2   Type          335 non-null    object
+ 3   ICEV          335 non-null    int64 
+ 4   HEV           335 non-null    int64 
+ 5   PHEV          335 non-null    int64 
+ 6   HEV & PHEV    335 non-null    int64 
+ 7   BEV           335 non-null    int64 
+ 8   Total xEV     335 non-null    int64 
+ 9   Not Specific  335 non-null    int64 
+ 10  Other         335 non-null    int64 
+ 11  Total         335 non-null    int64 
+dtypes: int64(10), object(2)
+memory usage: 31.5+ KB
 ```
-2.2.3)สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธ.ค. 2565 การไฟฟ้านครหลวง
+
+2.2.3) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธ.ค. 2565 การไฟฟ้านครหลวง
+
+![image](https://user-images.githubusercontent.com/114766023/226974536-990169c3-7c73-47de-8119-65812dbf013c.png)
 
 ลักษณะของข้อมูลที่พบและต้องจัดการคือ
 1. ข้อมูลมีแถวที่เป็น NaN ทั้งส่วนบนและส่วนล่างของ dataframe เนื่องจากข้อมูลเก็บมาในรูปแบบ Excel จึงต้องตัดออกและเลือกเฉพาะคอลัมน์ 'สถานีอัดประจุไฟฟ้า' มาใช้ในการวิเคราะห์
@@ -137,11 +165,20 @@ Data columns (total 12 columns):
 charger_df = pd.read_csv("https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/EV_Charger(x-).csv?raw=true",header = 2)
 charger_df.info()
 ```
+|index|ปี|เดือน|Unnamed: 2|บ้านอยู่อาศัย|กิจการ    ขนาดเล็ก|กิจการ     ขนาดกลาง|กิจการ      ขนาดใหญ่|กิจการ     เฉพาะอย่าง|องค์กรที่ไม่แสวงหากำไร|สูบน้ำเพื่อการเกษตร|Unnamed: 10|สถานีอัดประจุไฟฟ้า|    จำนวนผู้ใช้ไฟฟ้า     |Unnamed: 13|Unnamed: 14|Unnamed: 15|Unnamed: 16|Unnamed: 17|Unnamed: 18|Unnamed: 19|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|0|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|ผู้ใช้ไฟฟ้าชั่วคราว|สำหรับยานยนต์ไฟฟ้า \*|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
+|1|NaN|NaN|NaN|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|\(ราย\)|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
+|2|2562\.0|ม\.ค\.|NaN|3,250,102|510,189|23,355|2,392|3,202|318| -   |26,286|93|3,815,937|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
+|3|2562\.0|ก\.พ\.|NaN|3,259,884|510,869|23,429|2,398|3,209|318| -   |26,490|101|3,826,698|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
+|4|2562\.0|มี\.ค\.|NaN|3,269,233|511,305|23,488|2,396|3,230|324| -   |26,640|106|3,836,722|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
+
 ```
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 55 entries, 0 to 54
 Data columns (total 52 columns):
 ```
+
 แทนค่า NaN ด้วย 0 และตัดแถวกับคอลัมน์ที่ไม่ต้องการออก
 ```
 charger_df1 = charger_df.iloc[2:50, [0,1,11]]
@@ -156,7 +193,15 @@ charger_df7['Year'] = charger_df7['Year']-543
 charger_df7.insert(2, 'Year-Month', pd.to_datetime(charger_df7[['Year', 'Month']].assign(Day=1)) )
 charger_df7
 ```
-2.2.4)ข้อมูลภูมิศาสตร์ระบุขอบเขตจังหวัดของประเทศไทยและ DC EV Charging Station Thailand
+|index|Year|Month|Year-Month|สถานีอัดประจุไฟฟ้า|
+|---|---|---|---|---|
+|2|2019|1|2019-01-01 00:00:00|93|
+|3|2019|2|2019-02-01 00:00:00|101|
+|4|2019|3|2019-03-01 00:00:00|106|
+|5|2019|4|2019-04-01 00:00:00|111|
+|6|2019|5|2019-05-01 00:00:00|115|
+
+2.2.4) ข้อมูลภูมิศาสตร์ระบุขอบเขตจังหวัดของประเทศไทยและ DC EV Charging Station Thailand
 
 ```
 #Import Thailand map data
@@ -164,10 +209,9 @@ charger_df7
 gdf = gpd.read_file('tha_admbnda_adm1_rtsd_20190221.shp')
 gdf.head()
 ```
-ลักษณะของข้อมูลที่พบและต้องจัดการคือ
-1. เนื่องจากไฟล์ DC EV Charging Station Thailand - Piyamate Wisanuvej เป็น .kml file จึงนำไปแปลงเป็น .csv file ด้วยเว็ป https://mygeodata.cloud/converter/ ก่อน ซึ่งได้ออกมาทั้งหมด 7 ไฟล์ตามประเภทของผู้ให้บริการ แล้วจึงต้องทำการรวมไฟล์ทั้ง 7 ไฟล์เป็น dataframe เดียว
 
-2. DC EV Charging Station Thailand ข้อมูลที่ตั้งเป็นภาษาไทยและยากที่จะแยกเอาจังหวัดออกมา จึงใช้วิธีการนำข้อมูล Latitude และ Longitude ไปเทียบกับ Polygon geometry ในGeoDataframe ประเทศไทย เพื่อเอาชื่อจังหวัดจากแผนที่มาเพิ่มข้อมูลของจังหวัดของที่ตั้งสถานีก่อนนำมาวิเคราะห์
+![image](https://user-images.githubusercontent.com/114766023/226981497-04ba409a-6cb9-4437-ad4c-fd9698cafadf.png)
+
 ```
 #Read all data chager locations of each brand.
 df_ea24 = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/EA_24hr.csv?raw=true'
@@ -177,9 +221,15 @@ df_evolt = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-min
 df_mg = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/MG.csv?raw=true')
 df_pea = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/PEA.csv?raw=true')
 df_ptt = pd.read_csv('https://github.com/crispyporkwithholybasil/5001-DADS-miniproject/blob/main/PTT.csv?raw=true')
-
 df_charger = pd.concat([df_ea24,df_eaop,df_elex,df_evolt,df_mg,df_pea,df_ptt])
 ```
+![image](https://user-images.githubusercontent.com/114766023/226987236-18d6ccd8-520a-4117-9768-e0d65a6396ab.png)
+
+ลักษณะของข้อมูลที่พบและต้องจัดการคือ
+1. เนื่องจากไฟล์ DC EV Charging Station Thailand - Piyamate Wisanuvej เป็น .kml file จึงนำไปแปลงเป็น .csv file ด้วยเว็ป https://mygeodata.cloud/converter/ ก่อน ซึ่งได้ออกมาทั้งหมด 7 ไฟล์ตามประเภทของผู้ให้บริการ แล้วจึงต้องทำการรวมไฟล์ทั้ง 7 ไฟล์เป็น dataframe เดียว
+
+2. DC EV Charging Station Thailand ข้อมูลที่ตั้งเป็นภาษาไทยและยากที่จะแยกเอาจังหวัดออกมา จึงใช้วิธีการนำข้อมูล Latitude และ Longitude ไปเทียบกับ Polygon geometry ในGeoDataframe ประเทศไทย เพื่อเอาชื่อจังหวัดจากแผนที่มาเพิ่มข้อมูลของจังหวัดของที่ตั้งสถานีก่อนนำมาวิเคราะห์
+
 ```
 #Mapping Charging station point with province name by mapping Latitude and Longitude data with polygon data in GeodataFrame
 def get_province_name(lat, lon, gdf):
@@ -190,13 +240,16 @@ def get_province_name(lat, lon, gdf):
     return 'Not found'
     
 df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row['Latitude'], 
-                                                                             row['Longitude'], gdf), axis=1)
-```
+                                                                             row['Longitude'], gdf), axis=1)					
+```									     
+								     
+![image](https://user-images.githubusercontent.com/114766023/226986963-29716a33-8995-48a4-9a94-4b990a104213.png)
+
 ## 3 : EDA
 ในการศึกษาครั้งนี้จะสนใจเฉพาะรถยนต์ที่ไม่ใช่เพื่อการพาณิชย์ได้แก่รถยนต์นั่งส่วนบุคคล (Passenger car) รถกระบะขนาด 1 ตัน (Pickup 1 ton truck) และรถกลุ่ม PPV เท่านั้น
 
 
-3.1)	แนวโน้มปริมาณการผลิตยานยนต์สำหรับในประเทศไทย
+3.1) แนวโน้มปริมาณการผลิตยานยนต์สำหรับในประเทศไทย
 ในที่นี้ใช้ข้อมูลยอดการผลิตสำหรับในประเทศแทนทิศทางของอุตสาหกรรมรถยนต์ภายในประเทศเนื่องจากหากยอดสั่งซื้อ/ผลิตสูงขึ้นหรือลดลง อุตสาหกรรมและธุรกิจที่เกี่ยวข้องในประเทศก็จะได้รับผลกระทบและไปในทิศทางเดียวกัน
 ดูแนวโน้มการเปลี่ยนแปลงของรถยนต์ที่ผลิตเพื่อจำหน่ายในประทศไทยเป็นรายปีและสัดส่วนของรถยนต์นั่งส่วนบุคคลกับรถกระบะขนาด 1 ตันในแต่ละปี
 
@@ -219,7 +272,7 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 
 ![image](https://user-images.githubusercontent.com/114766023/226757738-e20a3cf0-54d3-416b-9736-933c00e5bc87.png)
 
-เนื่องจากกราฟทับซ้อนกันมากจนทำให้ดูแนวโน้มได้ยาก จึงแยกกราฟออกเป็น subplot ตาม Region ทั้ง 8 ดังนี้
+เนื่องจากกราฟทับซ้อนกันมากจนทำให้ดูแนวโน้มได้ยากจึงแยกกราฟออกเป็น subplot ตาม Region ทั้ง 8 ดังนี้
 
 
 
@@ -257,9 +310,12 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 
 จากสัดส่วนรถยนต์ไฟฟ้า(EV) แต่ละประเภทพบว่าสัดส่วนการเติบโตของรถยนต์ Battery EV (BEV) มีเพิ่มมากขึ้นเมื่อเทียบกับ Hybrid EV (HEV) และ Plug-In Hybrid EV (PHEV) โดยสัดส่วน BEV เทียบกับ EV อื่นๆ เพิ่มขึ้นจาก 4.5% ในปี 2564 เป็น 11.4% ในปี 2565 และยอดจดทะเบียนปี 2565 เพิ่มขึ้นจาก ปี 2564 คิดเป็นอัตราการเติบโตสูงถึงกว่า 79%
 
-ในขณะที่ PHEV กับ HEV ถึงจะมียอดเพิ่มขึ้นแต่เทียบเป็นอัตราการเติบโตแล้วกลับพบว่าลดลงสวนทางกับ BEV จึงอาจจะกล่าวได้ว่าประเทศไทยกำลังเปลี่ยนผ่านสู่ยุครถยนต์ไฟฟ้าแบบใช้ไฟฟ้า 100% เช่น BEV และสัดส่วนของรถไฟฟ้ามีแนวโน้มจะกินส่วนแบ่งรถยนต์สันดาปภายใน (Internal Combustion Engine - ICE) เพิ่มขึ้นทุกปีตามมาตราการที่รัฐส่งเสริมทั้งฝั่งผู้บริโภคคือการลดภาษีและฝั่งผู้ผลิตที่ต้องผลิตรถไฟฟ้าให้มากกว่ายอดที่นำเข้าทั้งคัน (CBU) มาจำหน่าย
+ในขณะที่ PHEV กับ HEV ถึงจะมียอดเพิ่มขึ้นแต่เทียบเป็นอัตราการเติบโตแล้วกลับพบว่าลดลงสวนทางกับ BEV ซึ่งอาจจะกล่าวได้ว่าประเทศไทยกำลังเปลี่ยนผ่านสู่ยุครถยนต์ไฟฟ้าแบบใช้ไฟฟ้า 100% เช่น BEV และสัดส่วนของรถไฟฟ้ามีแนวโน้มจะกินส่วนแบ่งรถยนต์สันดาปภายใน (Internal Combustion Engine - ICE) เพิ่มขึ้นทุกปีตามมาตราการที่รัฐส่งเสริมทั้งฝั่งผู้บริโภคคือการลดภาษีและฝั่งผู้ผลิตที่ต้องผลิตรถไฟฟ้าให้มากกว่ายอดที่นำเข้าทั้งคัน (CBU) มาจำหน่าย
 
-3.4) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้า ถึง ธค 2565 การไฟฟ้านครหลวง ใช้ในการหาจำนวสนสถานีอัดประจุในพื้นที่ กทม.
+![image](https://user-images.githubusercontent.com/114766023/226990386-62985798-b125-4f1c-8f8c-66b744753edc.png)
+**Source : https://www.bangkokbiznews.com/business/986222**
+
+3.4) สถิติจำนวนผู้ใช้ไฟฟ้า แยกตามประเภทผู้ใช้ไฟฟ้าถึง ธ.ค. 2565 การไฟฟ้านครหลวง ใช้ในการหาจำนวนสถานีอัดประจุในพื้นที่ กทม.
 
 คำนวนหาอัตราการเพิ่มขึ้นของสถานีอัดประจุจากปีก่อนหน้า (%YOY Growth rate)
 ```
@@ -283,20 +339,26 @@ df_charger_provider = df_charger.pivot_table(index='Provider',values='Name',aggf
 df_charger_provider = df_charger_provider.rename({'Name':'Number_of_station'}, axis='columns')
 df_charger_provider
 ```
-![image](https://user-images.githubusercontent.com/114766023/226327454-a0f8116a-c704-4cf3-aa0f-d68791879e05.png)
 
-```
-#Merge charging number of charging station each province with GeoDataframe.
-gdf_merged = pd.merge(gdf, df_charger_prov,left_on='ADM1_EN', right_on='province_name', how='left')
-gdf_merged = gdf_merged.fillna(0)
-gdf_merged['Number_charging_station'] = gdf_merged['Number_charging_station'].astype(int)
-gdf_merged
-```
+|index|Provider|Number\_of\_station|
+|---|---|---|
+|0|Altervim|4|
+|1|EA|216|
+|2|EGAT|4|
+|3|EVolt|10|
+|4|EleX|64|
+|5|GWM|5|
+|6|MG|128|
+|7|PEA|131|
+|8|PTT|150|
+|9|Sharge|9|
+|10|Tesla|1|
+
 จากแผนที่จะเห็นว่ามีจุดของสถานีอัดประจุอยู่เกือบทุกจังหวัด แต่ส่วนมากจะกระจุกตัวอยู่ตามจังหวัดที่มีความสำคัญทางเศรษฐกิจ ซึ่งคาดว่าจะเป็น กรุงเทพมหานคร และปริมณฑล ชลบุรี ระยอง นครราชสีมา เชียงใหม่
 
-เพื่อให้เห็นภาพชัดยิ่งขึ้นว่าจริงหรือไม่ จึงพลอตจำนวนสถานีอัดประจุไฟฟ้าเป็น Choropleth ลงบนแผนที่เพื่อให้เห็นภาพชัดขึ้นต่อไป
-
 ![image](https://user-images.githubusercontent.com/114766023/226212147-2435c9f9-dcdf-418a-9656-28f061fa4a49.png)
+
+เพื่อให้เห็นภาพชัดยิ่งขึ้นว่าจริงหรือไม่ จึงพลอตจำนวนสถานีอัดประจุไฟฟ้าเป็น Choropleth ลงบนแผนที่เพื่อให้เห็นภาพชัดขึ้นต่อไป
 
 ![image](https://user-images.githubusercontent.com/114766023/226211340-bd80a0f8-11dd-4fcb-9747-6688b658e411.png)
 ![image](https://user-images.githubusercontent.com/114766023/226211345-8abaf546-e5b8-479b-8a1f-4c1d9e542bcf.png)
@@ -315,7 +377,15 @@ Average Charging station per Province: 9
 
 กราฟแท่งนี้แสดงให้เห็นจำนวนสถานีอัดประจุไฟฟ้าในแต่ละจังหวัดอย่างชัดเจน โดยพบว่ามี 4 จังหวัดที่ยังไม่มีสถานีอัดประจุไฟฟ้าไปติดตั้ง คือ กาฬสิน สมุทรสงคราม อุทัยธานี และ ระนอง และยังก็พบว่ามีเพียง 6 จังหวัดที่มีสถานีอัดประจุมากกว่า 20 สถานีได้แก่ กรุงเทพมหานคร นนทบุรี นครราชสีมา สมุทรปราการ ชลบุรี และเชียงใหม่ ตามลำดับ ดังตารางและกราฟด้านล่าง
 
-![image](https://user-images.githubusercontent.com/114766023/226212245-bb66fde0-6f97-4130-ae0b-ca987f8dc084.png)
+|index|Province|Number\_charging\_station|
+|---|---|---|
+|0|Bangkok|176|
+|1|Nonthaburi|47|
+|2|Nakhon Ratchasima|39|
+|3|Samut Prakan|31|
+|4|Chon Buri|28|
+|5|Chiang Mai|24|
+
 ![image](https://user-images.githubusercontent.com/114766023/226211370-14d9a961-f8de-4d21-a0d6-680de36b4ea5.png)
 
 ## 4 : Question and Answer
@@ -367,7 +437,7 @@ Average Charging station per Province: 9
 
 จากข้อมูลที่นำมาเสนอ สรุปได้ว่าอุตสาหกรรมยนต์ไทยฟื้นตัวขึ้นเกือบจะเท่าก่อนการระบาดของโควิด-19 และแนวโน้มค่อนข้างสดใส นอกจากนี้กระแสการเปลี่ยนผ่านสู่ยุครถยนต์ไฟฟ้ายังเกิดขึ้นอย่างรวดเร็ว ตามสัดส่วนและประมาณยอดจดทะเบียนที่เพิ่มขึ้น อันเนื่องมาจากการส่งเสริมของรัฐ แต่สาธารณูปโภคสำคัญคือ สถานีอัดประจุไฟฟ้ายังมีน้อยและกระจุกตามเมืองใหญ่ซึ่งทั้งภาครัฐและเอกชนจะต้องเร่งติดตั้งสถานีให้มากขึ้นทั่วประเทศ เพื่อให้ผู้บริโภคเชื่อมั่นว่าสามารถใช้รถไฟฟ้าเดินทางข้ามต่างจังหวัดได้อย่างสบายใจ และตัดสินใจซื้อรถไฟฟ้าได้ง่ายขึ้น
 
-ข้อเสอแนะ :
+ข้อเสอแนะและอุปสรรคที่พบ :
 
 1. ความยากในการหา dataset และ การเลือก dataset มาวิเคราะห์เพราะเวลามีจำกัด
 
@@ -375,8 +445,8 @@ Average Charging station per Province: 9
 
 3. ข้อมูลการจดทะเบียนรถยนต์ใหม่ถ้าสามารถระบุลงไประดับรายจังหวัดได้จะทำให้เห็นภาพของการกระจายและทิศทางที่ลึกมากขึ้น
 
-4. การ Plot กราฟบางอันต้องอาศัยความเข้าใจ Library และแต่ละ feature เพื่อให้กราฟอย่างที่ต้องการ
+4. การพลอตกราฟบางอันต้องอาศัยความเข้าใจ Library และแต่ละ feature เพื่อให้กราฟอย่างที่ต้องการ
 
 
-5. การ Plot map ด้วย GeoPandas เป็นเรื่องใหม่ ต้องทำความเข้าใจ Library พอสมควร รวมทั้งคุณสมบัตรของ Shape file อยากให้อาจารย์สอน library นี้ด้วยเพราะมีประโยชน์ในการไปใช้งาน
+5. การพลอตแผนที่ด้วย GeoPandas เป็นเรื่องใหม่ ต้องทำความเข้าใจ Library พอสมควร รวมทั้งคุณสมบัตรของ Shape file อยากให้อาจารย์สอน library นี้ด้วยเพราะมีประโยชน์ในการไปใช้งาน
 
