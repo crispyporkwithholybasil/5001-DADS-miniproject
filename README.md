@@ -226,7 +226,7 @@ df_charger['province_name'] = df_charger.apply(lambda row: get_province_name(row
 
 ![image](https://user-images.githubusercontent.com/114766023/226210712-13c23bec-82a0-4f45-96fd-510e5a7043bc.png)
 
-เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป้นเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
+เลือกดูในส่วนเฉพาะของ EV ว่ามีสัดส่วนเป็นอย่างไรในช่วง 3 ปีที่ผ่านมา นับตั้งแต่เกิดการระบาดของโควิด-19
 
 ![image](https://user-images.githubusercontent.com/114766023/226322538-15dd7df8-f317-43e4-b20d-5486f7739028.png)
 
